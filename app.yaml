@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: internalsagalogin
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: internalsagalogin
+  template:
+    metadata:
+      labels:
+        app: internalsagalogin
+    spec:
+      containers:
+      - name: internalsagalogin
+        image: claire192783.azurecr.io/app/tetris:1.0 # image in ACR
+        resources: # include resources for better scheduling
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: internalsagalogin
+spec:
+  ports:
+  - port: 80 # Access on service port 80
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: internalsagalogin
+  type: LoadBalancer # External Access via load balancer service
